@@ -1,0 +1,5 @@
+swiftmailer:
+    default_mailer: gmail
+    mailers:
+        gmail:
+            url: '%env(MAILER_URL)%'

@@ -1,3 +1,4 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+notification_api:
+    path: /api/{versionName}/notification/{typeName}
+    controller: App\Controller\Api\NotificationController
+    methods: ['POST']

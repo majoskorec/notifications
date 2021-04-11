@@ -1,0 +1,27 @@
+security:
+    encoders:
+        Symfony\Component\Security\Core\User\User: 'bcrypt'
+
+    providers:
+        in_memory:
+            memory:
+                users:
+                    app1:
+                        password: "$2y$13$JSGPBX4uVk8w8Gx9lyNJZuB8uUe9Epoc5BLhBIZ98x1SelqaYxad6"
+                        roles: ["ROLE_USER"]
+                    app2:
+                        password: "$2y$13$1lqoB/fO1w3GgsJQr6MIve81QExTGl0.nZeH0JrCkAZn8NTfA.Yte"
+                        roles: [ "ROLE_USER" ]
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: false
+            stateless: true
+            http_basic: ~
+            provider: in_memory
+
+    access_control:
+        - { path: ^/, roles: ROLE_USER }

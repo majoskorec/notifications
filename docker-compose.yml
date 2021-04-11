@@ -1,0 +1,53 @@
+version: '3'
+services:
+    notifications-fpm:
+        build:
+            context: ./
+            dockerfile: build/docker/fpm/Dockerfile
+        container_name: notifications-fpm
+        depends_on:
+            - notifications-db
+        working_dir: /var/www
+        environment:
+            - DATABASE_URL=mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@notifications-db:3306/${DATABASE_NAME}?serverVersion=5:7
+        volumes:
+            - ./:/var/www
+        networks:
+            - notifications-network
+
+    notifications-nginx:
+        build:
+            context: .
+            dockerfile: build/docker/nginx/Dockerfile
+        container_name: notifications-nginx
+        depends_on:
+            - notifications-fpm
+        volumes:
+            - ./:/var/www
+        ports:
+            - "8001:80"
+        networks:
+            - notifications-network
+
+    notifications-db:
+        image: mariadb:latest
+        container_name: notifications-db
+        ports:
+            - "3307:3306"
+        environment:
+            - MYSQL_ALLOW_EMPTY_PASSWORD="yes"
+            - MYSQL_DATABASE=${DATABASE_NAME}
+            - MYSQL_USER=${DATABASE_USER}
+            - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+        volumes:
+            - notifications_db_volume:/var/lib/mysql
+        networks:
+            - notifications-network
+
+networks:
+    notifications-network:
+        driver: bridge
+
+volumes:
+    notifications_db_volume:
+        driver: local
